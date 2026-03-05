@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+    <html xmlns="http://www.w3.0rg/1999/xhtml" xml:lang="fr" lang="fr" data-bs-theme="dark">
+    <head>
+        <title>Calcul Mental</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </head>
+    <body class="d-flex justify-content-center align-items-center min-vh-75 bg-body-tertiary flex-column">
+        <h1>Calcul Mental</h1>
+        <script>
+            const _TimerDuration = 15;
+            const MaxQuestion = 20;
+
+            let timeLeft = _TimerDuration;
+            let countdown;
+            let currentQuestion = 0;
+            let correctAnswers = 0;
+            let rn1 = 0;
+            let rn2 = 0;
+            let selectNumber = 0;
+
+            function updateInterface() {
+                const result = document.getElementsByName("result")[0]
+                const Currentresult = document.getElementsByName("inputResult")[0]
+                const progress = document.getElementsByName("calculProgress")[0]
+                const fNumber = document.getElementsByName("firstNumber")[0]
+                const sNumber = document.getElementsByName("secondNumber")[0]
+                const reussiteBar = document.getElementsByName("reussiteBar")[0]
+                const percentageReponse = document.getElementsByName("percentageReponse")[0]
+                const progressPercent = (currentQuestion / MaxQuestion) * 100;
+                const reussitePercent = (correctAnswers / currentQuestion) * 100;
+                reussiteBar.style.width = reussitePercent + "%";
+                progress.style.width = progressPercent + "%";
+                fNumber.innerText = Math.floor(rn1);
+                sNumber.innerText = Math.ceil(rn2);
+                percentageReponse.innerText = Math.round(reussitePercent) + " %";
+                Currentresult.value = "";
+
+                if (reussitePercent >= 70) {
+                    reussiteBar.className = "progress-bar bg-success";
+                    
+                } else if (reussitePercent <= 30) {
+                    reussiteBar.className = "progress-bar bg-danger";
+                } else {
+                    reussiteBar.className = "progress-bar bg-warning";
+                }
+            }
+
+             function Timer(time) {
+                const Timers = document.getElementsByName("Timers")[0];
+                timeLeft = time+1;
+                countdown = setInterval(() => {
+                    timeLeft--;
+                    
+                    Timers.innerText = "Temp Restant : " + timeLeft;
+                    if (timeLeft <= 0) {
+                        const result = document.getElementsByName("result")[0]
+                        const Currentresult = document.getElementsByName("inputResult")[0]
+                        const progress = document.getElementsByName("calculProgress")[0]
+                        const fNumber = document.getElementsByName("firstNumber")[0]
+                        const sNumber = document.getElementsByName("secondNumber")[0]
+                        const reussiteBar = document.getElementsByName("reussiteBar")[0]
+                        const percentageReponse = document.getElementsByName("percentageReponse")[0]
+
+                        result.style.color = "red"
+                        result.innerText = "La réponse na pas était donner dans le temp donner !"
+
+                        if (currentQuestion < MaxQuestion) {
+                            randomNumbers();
+                            currentQuestion++;
+
+                            updateInterface();
+                            clearInterval(countdown);
+                            Timer(_TimerDuration);
+                        } else {
+                            clearInterval(countdown);
+                            Timers.innerText = "Temp Restant : 0";
+                            Timers.innerText = "Calcule Mental Terminé !";
+
+                            Currentresult.disabled = true;
+                        }
+                    }
+                }, 1000);
+            }
+
+            function randomNumbers() {
+                rn1 = Math.floor(Math.random() * 1000);
+                rn2 = Math.floor(Math.random() * 1000);
+                selectNumber = rn1 + rn2;
+            }
+
+            randomNumbers();
+
+            function checkIfCorrect() {
+               const number1 = parseInt(document.form1.inputResult.value) || 0;
+               const result = document.getElementsByName("result")[0]
+                const Currentresult = document.getElementsByName("inputResult")[0]
+                const progress = document.getElementsByName("calculProgress")[0]
+                const fNumber = document.getElementsByName("firstNumber")[0]
+                const sNumber = document.getElementsByName("secondNumber")[0]
+                const reussiteBar = document.getElementsByName("reussiteBar")[0]
+                const percentageReponse = document.getElementsByName("percentageReponse")[0]
+
+               if (isNaN(number1)) {
+                    alert("Veuillez entrer des nombres valides.");
+                    return;
+                }        
+
+                if (number1 == selectNumber) {
+                    correctAnswers++;
+                    result.style.color = "green"
+                    result.innerText = "Bonne réponse"
+                } else {
+                    result.style.color = "red"
+                    result.innerText = "Mauvaise réponse"
+                }
+
+                if (currentQuestion < MaxQuestion) {
+                    randomNumbers();
+                    currentQuestion++;
+
+                    updateInterface();
+                    clearInterval(countdown);
+                    Timer(_TimerDuration);
+                } else {
+                    clearInterval(countdown);
+                    Timers.innerText = "Temp Restant : 0";
+                    Timers.innerText = "Calcule Mental Terminé !";
+                    Currentresult.disabled = true;
+                }
+                
+            }
+
+            document.write("<h2 style=color yellow name=\"Timers\"> Temp Restant : " + _TimerDuration + " </h2>");
+            document.write("<h2 name=\"firstNumber\">" + Math.floor(rn1) + "</h2>");
+            document.write("<h1> + </h1>");
+            document.write("<h2 name=\"secondNumber\">" + Math.ceil(rn2) + "</h2>");
+            Timer(_TimerDuration);
+        </script>
+        <form name="form1" class="text-center">
+        <br>
+        <input type="text" name="inputResult" value="" size=50 class="form-control text-center">
+        <br><br>
+        <input type="button" value="Valider" onclick="checkIfCorrect()" class="btn btn-success">
+        <br><br>
+        <br>
+        <h2 name="result"><br></h2>
+        <br>
+        progression :
+        <div class="progress mb-2">
+            <div name="calculProgress" class="progress-bar bg-warning" role="progressbar" style="width: 0%">
+            </div>
+        </div>
+        Taux de réussite :
+         <div class="progress mb-2">
+            <div name="reussiteBar" class="progress-bar bg-success" role="progressbar" style="width: 0%">
+            </div>
+        </div>
+        <h4 name="percentageReponse">0 %</h4>
+    </body>
+</html>
